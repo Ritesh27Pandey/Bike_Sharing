@@ -1,0 +1,9 @@
+numpy
+pandas 
+Flask
+scikit-learn
+seaborn
+imblearn
+python-box
+PyYAML
+-e .

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seoul Bike Sharing Demand Prediction ML App</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body{
+            background-color: rgb(132, 164, 149);
+            font-family: Arial, sans-serif;
+        }
+
+        img{
+          padding: 3rem 3rem 0rem 3rem;
+        }
+
+        /* div{
+            width: 100%;
+            height: 250px;
+            background-image: url(Images/banner.jpg);
+            background-size: cover;
+            background-position-y: center;
+            opacity: 0.7;
+        }  */
+        
+        h1 { 
+            color: blue; 
+            text-align: center; 
+            margin-top: 1rem; 
+        }
+
+        .main-header{
+             padding: 2rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        .main-form{
+            text-align: center;
+        }
+
+        input{
+          width: 160px;
+          padding: 5px;
+        }
+
+        input, label, select{
+            margin: 1em;
+        }
+
+        form{
+            font-size: large;
+            font-weight: 900;
+            width: 500px;
+            margin-top: 1rem;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 1rem;
+            border: 2px solid red;
+            background-color: rgb(125, 132, 39);
+            border-radius: 8px;
+        }
+
+        form:hover{
+            color: rgb(194, 191, 45);
+            background-color: rgb(25, 133, 92);
+            transition: all 0.5s ease-out;
+        }
+
+        .predict{
+            color: rgb(206, 110, 26);
+            width: 120px;
+            padding: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .predict:hover{
+            background-color: rgb(55, 5, 5);
+            transition: all 0.5s ease-in-out;
+            color: white;
+        }
+
+        .result{
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .final-result{
+            width: 200px;
+            text-align: center;
+            padding: 1rem;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            font-weight: bolder;
+            font-size: larger;
+            margin: 1rem auto;
+            border: 2px solid #494949;
+            background-color: rgb(22, 206, 19);
+            border-radius: 8px;
+        }
+      
+    </style>
+    <script>
+        function validateForm() {
+            const hour = document.getElementById('Hour').value;
+            const day = document.getElementById('Day').value;
+            const month = document.getElementById('Month').value;
+            const year = document.getElementById('Year').value;
+            const season = document.getElementById('Seasons').value.toLowerCase();
+
+            const validSeasons = ["summer", "winter", "spring", "autumn"];
+            const yearPattern = /^\d{4}$/;
+
+            if (hour < 0 || hour > 23) {
+                alert("Hour must be between 0 and 23.");
+                return false;
+            }
+
+            if (day < 1 || day > 31) {
+                alert("Day must be between 1 and 31.");
+                return false;
+            }
+
+            if (month < 1 || month > 12) {
+                alert("Month must be between 1 and 12.");
+                return false;
+            }
+
+            if (!validSeasons.includes(season)) {
+                alert("Season must be one of the following: summer, winter, spring, autumn.");
+                return false;
+            }
+
+            if (!yearPattern.test(year)) {
+                alert("Year must be a four-digit number (e.g., 2024).");
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</head>
+<body>
+  <div>
+    <img src="static/banner.jpg" class="w3-border w3-padding" width="100%" height="300px" alt="Seoul bike banner"> 
+  </div>
+    <h2 class="main-header"><u>Seoul Bike Sharing Demand Prediction ML APP</u></h2>
+    <form class="main-form" action="/prediction" method="post" onsubmit="return validateForm()">
+        <label for="Hour">Hour:</label>
+        <input type="number" id="Hour" name="Hour" step="1" placeholder="Enter the hour (0-23)" min="0" max="23" required><br>
+
+        <label for="Temperature">Temperature:</label>
+        <input type="number" id="Temperature" name="Temperature" step="0.1" placeholder="Enter temperature" required><br>
+
+        <label for="Humidity">Humidity:</label>
+        <input type="number" id="Humidity" name="Humidity" step="0.1" placeholder="Enter humidity" required><br>
+
+        <label for="Windspeed">Windspeed:</label>
+        <input type="number" id="Windspeed" name="Windspeed" step="0.1" placeholder="Enter windspeed" required><br>
+
+        <label for="Visibility">Visibility:</label>
+        <input type="number" id="Visibility" name="Visibility" step="0.1" placeholder="Enter visibility" required><br>
+
+        <label for="Seasons">Seasons:</label>
+        <input type="text" id="Seasons" name="Seasons" placeholder="Enter season (summer, winter, spring, autumn)" required><br>
+
+        <label for="Holiday">Holiday:</label>
+        <select id="Holiday" name="Holiday" required>
+            <option value="">Select holiday</option>
+            <option value="Holiday">Holiday</option>
+            <option value="No Holiday">No Holiday</option>
+        </select><br>
+
+        <label for="FunctioningDay">Functioning Day:</label>
+        <select id="FunctioningDay" name="FunctioningDay" required>
+            <option value="">Select functioning day</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select><br>
+
+        <label for="Day">Day:</label>
+        <input type="number" id="Day" name="Day" step="1" placeholder="Enter the day (1-31)" min="1" max="31" required><br>
+
+        <label for="Month">Month:</label>
+        <input type="number" id="Month" name="Month" step="1" placeholder="Enter the month (1-12)" min="1" max="12" required><br>
+
+        <label for="Year">Year:</label>
+        <input type="number" id="Year" name="Year" step="1" placeholder="Enter the year (e.g., 2024)" pattern="\d{4}" required><br>
+
+        <input class="predict" type="submit" value="Predict">
+    </form>
+    {% if final_result %}
+        <h2 class="result">Total Bike Required:</h2>
+        <p class="final-result">{{ final_result }}</p>
+    {% endif %}
+</body>
+</html>
